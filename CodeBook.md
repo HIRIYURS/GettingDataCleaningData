@@ -4,9 +4,25 @@
 I am acknowledging the use of the data set used for this project with reference to the following publication,
 [1] Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
 
+Cleaning up the data
 ==================================================================
-Human Activity Recognition Using Smartphones Dataset
-Version 1.0
+The obejective of this exercise is to create a tidy data set combining the Training and the test data captured in to one data set, taking only the average(mean) of each variable for each activity and for each subject (who performed the test/training).
+
+The function (defined in run_analysis.R) performs the following transformations on the data,
+- Load the activity labels and features.
+- Extract the mean and standard deviation column names.
+- Loads both test and training data set, labels and subjects
+- Uses descriptive activity names to name the activities in the data set (for both test and training data)
+- Extracts only the measurements on the mean and standard deviation for each measurement in Test and Training data.
+- Merges the training and the test sets to create one data set.
+- Appropriately labels the data set with descriptive variable names
+- Creates a new, independent tidy data set with the average of each variable for each activity and each subject
+
+Data and Variables
+==================================================================
+The details of the data and the variables has been provided below (from the README.txt of the original data set published by authors)
+
+Human Activity Recognition Using Smartphones Dataset - Version 1.0
 ==================================================================
 The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
 
