@@ -9,7 +9,7 @@
 ##
 ## http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones 
 ##
-## This R script (run_analysis.R) does the following,
+## This R function (run_analysis.R) does the following,
 ## 1. Merges the training and the test sets to create one data set.
 ## 2. Extracts only the measurements on the mean and standard deviation for each 
 ##    measurement. 
@@ -34,7 +34,7 @@ run_analysis <- function() {
     print("Step 2. Extract only the measurements on the mean and standard deviation for each measurement.")
     extract_features <- grepl("mean|std", features)
 
-    # Load and process X_test & y_test data.
+    # Load and process Test Set, Labels and Subject.
     print("Load the Test data, labels and subjects.")
     test_set <- read.table("./data/UCI HAR Dataset/test/X_test.txt")
     test_labels <- read.table("./data/UCI HAR Dataset/test/y_test.txt")
@@ -55,7 +55,7 @@ run_analysis <- function() {
     # Bind data
     test_data <- cbind(as.data.table(test_subject), test_labels, test_set)
 
-    # Load and process X_train & y_train data.
+    # Load and process Training Set, Labels and Subject.
     print("Load the Training data.")
     train_set <- read.table("./data/UCI HAR Dataset/train/X_train.txt")
     train_labels <- read.table("./data/UCI HAR Dataset/train/y_train.txt")
@@ -94,7 +94,7 @@ run_analysis <- function() {
 
     print("Writing the Tidy data to tidy_data.txt file in data dir.")
     
-    write.table(tidy_data, file = "./data/tidy_data.txt")
+    write.table(tidy_data, file = "./data/clean_data.txt")
     
     print("Completed the analysis!!")
 }
