@@ -24,11 +24,11 @@ run_analysis <- function() {
 
     # Load: activity labels
     print("Read Activity Labels.")
-    activity_labels <- read.table("./data/UCI HAR Dataset/activity_labels.txt")[,2]
+    activity_labels <- read.table("./UCI HAR Dataset/activity_labels.txt")[,2]
 
     # Load: data column names
     print("Read Data column names.")
-    features <- read.table("./data/UCI HAR Dataset/features.txt")[,2]
+    features <- read.table("./UCI HAR Dataset/features.txt")[,2]
 
     # Extract only the measurements on the mean and standard deviation for each measurement.
     print("Step 2. Extract only the measurements on the mean and standard deviation for each measurement.")
@@ -36,9 +36,9 @@ run_analysis <- function() {
 
     # Load and process Test Set, Labels and Subject.
     print("Load the Test data, labels and subjects.")
-    test_set <- read.table("./data/UCI HAR Dataset/test/X_test.txt")
-    test_labels <- read.table("./data/UCI HAR Dataset/test/y_test.txt")
-    test_subject <- read.table("./data/UCI HAR Dataset/test/subject_test.txt")
+    test_set <- read.table("./UCI HAR Dataset/test/X_test.txt")
+    test_labels <- read.table("./UCI HAR Dataset/test/y_test.txt")
+    test_subject <- read.table("./UCI HAR Dataset/test/subject_test.txt")
 
     names(test_set) = features
 
@@ -57,10 +57,10 @@ run_analysis <- function() {
 
     # Load and process Training Set, Labels and Subject.
     print("Load the Training data.")
-    train_set <- read.table("./data/UCI HAR Dataset/train/X_train.txt")
-    train_labels <- read.table("./data/UCI HAR Dataset/train/y_train.txt")
+    train_set <- read.table("./UCI HAR Dataset/train/X_train.txt")
+    train_labels <- read.table("./UCI HAR Dataset/train/y_train.txt")
 
-    train_subject <- read.table("./data/UCI HAR Dataset/train/subject_train.txt")
+    train_subject <- read.table("./UCI HAR Dataset/train/subject_train.txt")
 
     names(train_set) = features
 
@@ -94,7 +94,7 @@ run_analysis <- function() {
 
     print("Writing the Tidy data to tidy_data.txt file in data dir.")
     
-    write.table(tidy_data, file = "./data/clean_data.txt")
+    write.table(tidy_data, file = "./clean_data.txt")
     
     print("Completed the analysis!!")
 }
