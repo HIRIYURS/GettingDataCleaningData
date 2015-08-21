@@ -3,12 +3,11 @@
 
 ###Step by Step instructions to setup this project on your machine,
 1. Download the data files (.zip file) from the url - https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
-2. Under the current directory (where the zip file is downloaded), create a new directory called "data"
-3. Extract the zip file in to the "data" directory. This will create a directory by name, "UCI HAR Dataset"
+2. Extract the zip file in to the current directory. This will create a directory by name, "UCI HAR Dataset"
 4. Download the run_analysis.R file from this project to your current working directory
-5. Open your R console or R Studio and set the working directory (using setwd() function)to above working directory where you have placed the run_analysis.R and the "data" folder(directory)
+5. Open your R console or R Studio and set the working directory (using setwd() function)to above working directory where you have placed the run_analysis.R and the "UCI HAR Dataset" folder(directory)
 6. Source the run_analysis.R file to load/create the function run_analysis in your R working environment
-7. Now you can run the function "run_analysis()" which will create new tidy data file, "clean_data.txt" under the "data" directory
+7. Now you can run the function "run_analysis()" which will create new tidy data file, "clean_data.txt" under the current directory
 
 The function run_analysis (defined in run_analysis.R file) does the following,
 - Merges the training and the test sets to create one data set.
