@@ -9,7 +9,7 @@
 ##
 ## http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones 
 ##
-## This R function (run_analysis.R) does the following,
+## This R script (run_analysis.R - Can be made into function as well) does the following,
 ## 1. Merges the training and the test sets to create one data set.
 ## 2. Extracts only the measurements on the mean and standard deviation for each 
 ##    measurement. 
@@ -18,83 +18,103 @@
 ## 5. From the data set in step 4, creates a second, independent tidy data set with 
 ##    the average of each variable for each activity and each subject.
 ##
-run_analysis <- function() {
-    require("data.table")
-    require("reshape2")
 
-    # Load: activity labels
-    print("Read Activity Labels.")
-    activity_labels <- read.table("./UCI HAR Dataset/activity_labels.txt")[,2]
-
-    # Load: data column names
-    print("Read Data column names.")
-    features <- read.table("./UCI HAR Dataset/features.txt")[,2]
-
-    # Extract only the measurements on the mean and standard deviation for each measurement.
-    print("Step 2. Extract only the measurements on the mean and standard deviation for each measurement.")
-    extract_features <- grepl("mean|std", features)
-
-    # Load and process Test Set, Labels and Subject.
-    print("Load the Test data, labels and subjects.")
-    test_set <- read.table("./UCI HAR Dataset/test/X_test.txt")
-    test_labels <- read.table("./UCI HAR Dataset/test/y_test.txt")
-    test_subject <- read.table("./UCI HAR Dataset/test/subject_test.txt")
-
-    names(test_set) = features
-
-    # Extract only the measurements on the mean and standard deviation for each 
-    # measurement.
-    test_set = test_set[,extract_features]
-
-    # Step 3.Uses descriptive activity names to name the activities in the data set
-    print("Step 3. Uses descriptive activity names for test data set")
-    test_labels[,2] = activity_labels[test_labels[,1]]
-    names(test_labels) = c("Activity_ID", "Activity_Label")
-    names(test_subject) = "subject"
-
-    # Bind data
-    test_data <- cbind(as.data.table(test_subject), test_labels, test_set)
-
-    # Load and process Training Set, Labels and Subject.
-    print("Load the Training data.")
-    train_set <- read.table("./UCI HAR Dataset/train/X_train.txt")
-    train_labels <- read.table("./UCI HAR Dataset/train/y_train.txt")
-
-    train_subject <- read.table("./UCI HAR Dataset/train/subject_train.txt")
-
-    names(train_set) = features
-
-    # Extract only the measurements on the mean and standard deviation for each measurement.
-    train_set = train_set[,extract_features]
-
-    # Step 3.Uses descriptive activity names to name the activities in the data set
-    print("Step 3. Uses descriptive activity names for train data set")
-    train_labels[,2] = activity_labels[train_labels[,1]]
-    names(train_labels) = c("Activity_ID", "Activity_Label")
-    names(train_subject) = "subject"
-
-    # Bind data
-    train_data <- cbind(as.data.table(train_subject), train_labels, train_set)
-
-    # Merge test and train data
-    print("Step 1. Merge test and train data")
-    data = rbind(test_data, train_data)
-
-    ## 4. Appropriately labels the data set with descriptive variable names
-    print("Step 4. Appropriately labels the data set with descriptive variable names")
-    id_labels   = c("subject", "Activity_ID", "Activity_Label")
-    data_labels = setdiff(colnames(data), id_labels)
-    melt_data      = melt(data, id = id_labels, measure.vars = data_labels)
-
-    # 5. Creates a second, independent tidy data set with the average of each 
-    #    variable for each activity and each subject.
-    # Apply mean function to dataset using dcast function
-    print("Step 5. Create a new tidy data set with avg of each variable for each activity and each subject")
-    tidy_data   = dcast(melt_data, subject + Activity_Label ~ variable, mean)
-
-    print("Writing the Tidy data to tidy_data.txt file in data dir.")
+##run_analysis <- function() {
     
-    write.table(tidy_data, file = "./clean_data.txt")
+    require(data.table)
+    require(dplyr)
     
-    print("Completed the analysis!!")
-}
+    ## Read the Features and Activity Labels
+    featureNames <- read.table("./UCI HAR Dataset/features.txt")
+    activityLabels <- read.table("./UCI HAR Dataset/activity_labels.txt")
+
+    ## Read the Training data - Subject, Lables, Training features data
+    trainingSubject <- read.table("./UCI HAR Dataset/train/subject_train.txt")
+    trainingLabels <- read.table("./UCI HAR Dataset/train/y_train.txt")
+    trainingFeatures <- read.table("./UCI HAR Dataset/train/X_train.txt")
+
+    ## Read the Test data -  - Subject, Lables, Training features data
+    testSubject <- read.table("./UCI HAR Dataset/test/subject_test.txt")
+    testLabels <- read.table("./UCI HAR Dataset/test/y_test.txt")
+    testFeatures <- read.table("./UCI HAR Dataset/test/X_test.txt")
+
+    ## Merge Test and Training data - Subject, lables and Features data
+    ## respectively
+    combinedsubject <- rbind(trainingSubject, testSubject)
+    combinedLabels <- rbind(trainingLabels, testLabels)
+    combinedFeatures <- rbind(trainingFeatures, testFeatures)
+
+    ## Set the Column names
+    colnames(combinedLabels) <- "Activity"
+    colnames(combinedsubject) <- "Subject"
+    
+    ## Transpose the 2nd column in Features.txt file into Column names (Variable) of 
+    ## the features data set 
+    colnames(combinedFeatures) <- t(featureNames[2])
+    
+    ## Step 1: Merges the training and the test sets to create one data set.
+    ## Merge Subject, Activity Labels and Features
+    combinedData <- cbind(combinedsubject, combinedLabels, combinedFeatures)
+
+    ## Select only the columns with Mean and std values
+    meanSTDColumns <- grep(".*Mean.*|.*Std.*", names(combinedData), ignore.case=TRUE)
+    
+    ## We also need Subject(1) and Activity Label(2) columns (Variables)
+    finalColumns <- c(1, 2, meanSTDColumns)
+    
+    dim(combinedData)
+    
+    ## Step 2: Extracts only the measurements on the mean and standard
+    ##         deviation for each measurement.
+    meanSTDData <- combinedData[,finalColumns]
+    dim(meanSTDData)
+    
+    ## Step 3: Uses descriptive activity names to name the activities in the data set
+    ## Replace the Activity Label ID (1-6) with actual 
+    ## Activity Lables from activity_labels.txt file
+    meanSTDData$Activity <- as.character(meanSTDData$Activity)
+    for (i in 1:6){
+        meanSTDData$Activity[meanSTDData$Activity == i] <- as.character(activityLabels[i,2])
+    }
+    
+    ## Convert back the Activity Label column from text/character to factor
+    meanSTDData$Activity <- as.factor(meanSTDData$Activity)
+    
+    names(meanSTDData)
+    
+    ## Step 4: Appropriately labels the data set with descriptive variable names. 
+    names(meanSTDData)<-gsub("Acc", "Accelerometer", names(meanSTDData))
+    names(meanSTDData)<-gsub("Gyro", "Gyroscope", names(meanSTDData))
+    names(meanSTDData)<-gsub("BodyBody", "Body", names(meanSTDData))
+    names(meanSTDData)<-gsub("Mag", "Magnitude", names(meanSTDData))
+    names(meanSTDData)<-gsub("^t", "Time", names(meanSTDData))
+    names(meanSTDData)<-gsub("^f", "Frequency", names(meanSTDData))
+    names(meanSTDData)<-gsub("tBody", "TimeBody", names(meanSTDData))
+    names(meanSTDData)<-gsub("-mean()", "Mean", names(meanSTDData), ignore.case = TRUE)
+    names(meanSTDData)<-gsub("-std()", "STD", names(meanSTDData), ignore.case = TRUE)
+    names(meanSTDData)<-gsub("-freq()", "Frequency", names(meanSTDData), ignore.case = TRUE)
+    names(meanSTDData)<-gsub("angle", "Angle", names(meanSTDData))
+    names(meanSTDData)<-gsub("gravity", "Gravity", names(meanSTDData))
+    
+    names(meanSTDData)
+
+    ## Convert the subject column (1-30) into factor - will be useful for aggregating  
+    meanSTDData$Subject <- as.factor(meanSTDData$Subject)
+    
+    ## Make it into a table for tidying the data and aggregating averages
+    meanSTDData <- data.table(meanSTDData)
+    
+    ## Step 5: From the data set in step 4, creates a second, independent tidy data 
+    ##         set with the average of each variable for each activity and each subject.
+
+    ## Use aggregate function to compute the averages of each varaible 
+    meanTidyData <- aggregate(. ~Subject + Activity, meanSTDData, mean)
+    
+    ## Order the rows by Subject and then Activity Label
+    meanTidyData <- meanTidyData[order(meanTidyData$Subject,meanTidyData$Activity),]
+    
+    ## Write the tiday data to an output file
+    write.table(meanTidyData, file = "./Consolidated_TidyData.txt", row.names = FALSE)
+    
+##}
+    
