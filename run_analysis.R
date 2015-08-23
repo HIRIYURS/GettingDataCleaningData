@@ -19,6 +19,7 @@
 ##    the average of each variable for each activity and each subject.
 ##
 
+## Uncomment the below line and the very last line to make this script into a function
 ##run_analysis <- function() {
     
     require(data.table)
@@ -62,13 +63,10 @@
     ## We also need Subject(1) and Activity Label(2) columns (Variables)
     finalColumns <- c(1, 2, meanSTDColumns)
     
-    dim(combinedData)
-    
     ## Step 2: Extracts only the measurements on the mean and standard
     ##         deviation for each measurement.
     meanSTDData <- combinedData[,finalColumns]
-    dim(meanSTDData)
-    
+
     ## Step 3: Uses descriptive activity names to name the activities in the data set
     ## Replace the Activity Label ID (1-6) with actual 
     ## Activity Lables from activity_labels.txt file
@@ -79,8 +77,6 @@
     
     ## Convert back the Activity Label column from text/character to factor
     meanSTDData$Activity <- as.factor(meanSTDData$Activity)
-    
-    names(meanSTDData)
     
     ## Step 4: Appropriately labels the data set with descriptive variable names. 
     names(meanSTDData)<-gsub("Acc", "Accelerometer", names(meanSTDData))
@@ -96,8 +92,6 @@
     names(meanSTDData)<-gsub("angle", "Angle", names(meanSTDData))
     names(meanSTDData)<-gsub("gravity", "Gravity", names(meanSTDData))
     
-    names(meanSTDData)
-
     ## Convert the subject column (1-30) into factor - will be useful for aggregating  
     meanSTDData$Subject <- as.factor(meanSTDData$Subject)
     
